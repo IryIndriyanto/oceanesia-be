@@ -32,6 +32,4 @@ def create_app(is_test_active=False):
 
     api.register_blueprint()
 
-    // Apaan tuh
-
     return app
