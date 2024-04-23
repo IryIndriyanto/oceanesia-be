@@ -28,4 +28,9 @@ def create_app(is_test_active=False):
 
     api = Api(app)
 
+
+
+    api.register_blueprint()
+
+
     return app
