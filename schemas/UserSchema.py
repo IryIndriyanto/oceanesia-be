@@ -5,8 +5,3 @@ class UserSchema(Schema):
     username = fields.Str(required=True)
     email = fields.Str()
     password_hash = fields.Str(required=True)
-
-class UserUpdateSchema(Schema):
-    username = fields.Str()
-    password_hash = fields.Str()
-    email = fields.Str()
