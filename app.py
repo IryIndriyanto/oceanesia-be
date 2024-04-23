@@ -4,7 +4,7 @@ from flask import Flask
 from dotenv import load_dotenv
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
-
+from supabase_py import create_client
 
 def create_app(is_test_active=False):
     app = Flask(__name__)
