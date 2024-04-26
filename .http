@@ -1,0 +1,92 @@
+@ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzEwNTc0MzY4LCJqdGkiOiI0MDQ2OTlkNy00OWUxLTQyMWEtODczOS0wODZiZWI0MWE5ZmQiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoyLCJuYmYiOjE3MTA1NzQzNjgsImNzcmYiOiI0NTgxNGNhZC04ZTllLTRiMmMtYTYzNi0yYWQ2MDEzYjMyNDgiLCJleHAiOjE3MTA1NzUyNjh9.iwpdQ4Yc4jlKu-itegdNfI5xowgfGIkxYg9r0-pYGw0
+
+### register_new_user
+POST http://127.0.0.1:5000/users
+Content-Type: application/json
+
+{
+  "username": "user2",
+  "email": "user2@example.com",
+  "password": "ispassword"
+}
+
+### user_login
+POST http://127.0.0.1:5000/users/login
+Content-Type: application/json
+
+{
+  "username": "user2",
+  "email": "user2@example.com",
+  "password": "ispassword"
+}
+
+### get_user_info
+GET http://127.0.0.1:5000/users/me
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+
+### update_user_info
+PUT http://127.0.0.1:5000/users/me
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "email": "user1@example.com",
+  "password": "ispassword1"
+}
+
+### create_new_location
+POST http://127.0.0.1:5000/locations
+Content-Type: application/json
+
+{
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "name": "San Francisco",
+  "description": "A vibrant city in California"
+}
+
+
+### get_list_of_locations
+GET http://127.0.0.1:5000/locations
+
+### get_account_info
+GET http://127.0.0.1:5000/accounts/1
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+### update_account_info
+PUT http://127.0.0.1:5000/accounts/1
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "account_type": "daily_use"
+}
+
+### delete_account
+DELETE http://127.0.0.1:5000/accounts/1
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+
+### get_list_of_transaction
+GET http://127.0.0.1:5000/transactions
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+
+### get_transaction
+GET http://127.0.0.1:5000/transactions/2
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+
+### create_transaction
+POST http://127.0.0.1:5000/transactions
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "to_account_id": 3,
+  "amount": 10000.45,
+  "type": "deposit",
+  "description": "test transaction"
+}
