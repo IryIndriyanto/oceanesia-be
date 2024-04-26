@@ -36,18 +36,20 @@ Content-Type: application/json
   "password": "ispassword1"
 }
 
-### create_new_account
-POST http://127.0.0.1:5000/accounts
-Authorization: Bearer {{ACCESS_TOKEN}}
+### create_new_location
+POST http://127.0.0.1:5000/locations
 Content-Type: application/json
 
 {
-  "account_type": "saving"
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "name": "San Francisco",
+  "description": "A vibrant city in California"
 }
 
-### get_list_of_account
-GET http://127.0.0.1:5000/accounts
-Authorization: Bearer {{ACCESS_TOKEN}}
+
+### get_list_of_locations
+GET http://127.0.0.1:5000/locations
 
 ### get_account_info
 GET http://127.0.0.1:5000/accounts/1
