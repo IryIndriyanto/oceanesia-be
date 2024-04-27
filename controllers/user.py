@@ -4,7 +4,7 @@ from supabase_py import create_client
 from passlib.hash import pbkdf2_sha256
 from schemas import UserSchema, UserUpdateSchema
 from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity, get_jwt
-from datetime import datetime
+# from datetime import datetime
 
 supabase_url = 'YOUR_SUPABASE_URL'
 supabase_key = 'YOUR_SUPABASE_KEY'
