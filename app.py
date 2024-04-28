@@ -12,7 +12,7 @@ from controllers.location import blp as location_blueprint
 from controllers.environment_data import blp as environment_data_blueprint
 
 
-def create_app(is_test_active=False):
+def create_app():
     app = Flask(__name__)
     load_dotenv()
 
