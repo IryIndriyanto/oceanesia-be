@@ -14,7 +14,7 @@ blp = Blueprint(
 @blp.route("/", methods=["GET"])
 @blp.response(200, LocationSchema(many=True))
 def get_all_locations():
-    return LocationModel.query.all()
+    return LocationModel.query.limit(20).all()
 
 
 @blp.route("/search", methods=["GET"])
