@@ -6,9 +6,9 @@ from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
-# from controllers.user import user_blp
+from controllers.user import blp as user_blp
 from controllers.location import blp as location_blueprint
-# from controllers.issue import blp as issue_blueprint
+from controllers.issue import blp as issue_blueprint
 from controllers.environment_data import blp as environment_data_blueprint
 
 
@@ -38,9 +38,9 @@ def create_app():
 
     api = Api(app)
 
-    # api.register_blueprint(user_blp)
+    api.register_blueprint(user_blp)
     api.register_blueprint(location_blueprint)
-    # api.register_blueprint(issue_blueprint)
+    api.register_blueprint(issue_blueprint)
     api.register_blueprint(environment_data_blueprint)
 
     return app
