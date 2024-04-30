@@ -1,67 +1,84 @@
-from flask_smorest import abort, Blueprint
-from flask.views import MethodView
-from supabase_py import create_client
+from db import db
+from flask import jsonify
+from flask_smorest import Blueprint
+from models.user import UserModel
+from schemas.user import UserSchema
+from sqlalchemy.exc import IntegrityError
 from passlib.hash import pbkdf2_sha256
-from schemas import UserSchema, UserUpdateSchema
-from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt_identity, get_jwt
-from datetime import datetime
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt_identity,
+)
 
-supabase_url = 'YOUR_SUPABASE_URL'
-supabase_key = 'YOUR_SUPABASE_KEY'
-supabase = create_client(supabase_url, supabase_key)
+blp = Blueprint("users", "users", description="data of users", url_prefix="/users")
 
-user_blp = Blueprint("users", "users", description="Operations on users", url_prefix="/users")
 
-@user_blp.route("/register")
-class UserRegister(MethodView):
-    @user_blp.arguments(UserSchema)
-    @user_blp.response(200, UserSchema)
-    def post(self, user_data):
-        password_hash = pbkdf2_sha256.hash(user_data["password_hash"])
-        user_data["password_hash"] = password_hash
-        user_data["role"] = "user"
-        
-        # Insert user data into Supabase
-        response = supabase.table('users').insert(user_data).execute()
-        
-        if response['status'] == 201:
-            return response['data']
-        else:
-            abort(response['status'], message=response['error']['message'])
-    
-@user_blp.route("/login")
-class UserLogin(MethodView):
-    @user_blp.arguments(UserSchema)
-    def post(self, user_data):
-        response = supabase.table('users').select().eq('username', user_data["username"]).execute()
-        user = response['data'][0] if response['data'] else None
-        
-        if user and pbkdf2_sha256.verify(user_data["password_hash"], user["password_hash"]):
-            access_token = create_access_token(identity={"id": user['id'], "role": user['role']}, fresh=True)
-            refresh_token = create_refresh_token(identity={"id": user['id'], "role": user['role']})
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+@blp.route("/", methods=["POST"])
+@blp.arguments(UserSchema)
+@blp.response(200)
+def user_register(user_data):
+    try:
+        new_user = UserModel(
+            username=user_data["username"],
+            email=user_data["email"],
+            password_hash=pbkdf2_sha256.hash(user_data["password"]),
+        )
+        db.session.add(new_user)
+        db.session.commit()
+    except IntegrityError:
+        return jsonify({"Error": "Username or email already exists."}), 400
 
-        abort(401, message="Invalid credentials.")
 
-@user_blp.route('/me')
-class UserProfile(MethodView):
-    @staticmethod
-    @jwt_required()
-    @user_blp.response(200, UserSchema)
-    def get():
-        user_id = get_jwt_identity()["id"]
-        response = supabase.table('users').select().eq('id', user_id).execute()
-        user = response['data'][0] if response['data'] else None
-        return user
+@blp.route("/login", methods=["POST"])
+@blp.arguments(UserSchema)
+@blp.response(200)
+def user_login(user_data):
+    user = UserModel.query.filter_by(username=user_data["username"]).first()
+    if user and pbkdf2_sha256.verify(user_data["password"], user.password_hash):
+        access_token = create_access_token(identity=user.id, fresh=True)
+        refresh_token = create_refresh_token(identity=user.id)
+        return (
+            jsonify({"access token": access_token, "refresh token": refresh_token}),
+            200,
+        )
+    return jsonify({"message": "Invalid credentials"}), 401
 
-    @user_blp.arguments(UserUpdateSchema)
-    @jwt_required()
-    @user_blp.response(200, UserUpdateSchema)
-    def put(self, user_data):
-        user_id = get_jwt_identity()["id"]
-        response = supabase.table('users').update(user_data).eq('id', user_id).execute()
-        
-        if response['status'] == 200:
-            return user_data
-        else:
-            abort(response['status'], message=response['error']['message'])
+
+@blp.route("/me", methods=["GET"])
+@jwt_required()
+@blp.response(200)
+def get_user_profile():
+    user_id = get_jwt_identity()
+    user = db.session.get(UserModel, user_id)
+    if user:
+        return jsonify({"username": user.username, "email": user.email}), 200
+    return jsonify({"message": "User not found"}), 404
+
+
+@blp.route("/me", methods=["PUT"])
+@blp.arguments(UserSchema)
+@jwt_required()
+@blp.response(200)
+def edit_user_profile(user_data):
+    user_id = get_jwt_identity()
+    user = db.session.get(UserModel, user_id)
+    if user:
+        try:
+            updated_data = {
+                "username": user_data.get("username", user.username),
+                "email": user_data.get("email", user.email),
+            }
+
+            if "password" in user_data:
+                updated_data["password_hash"] = pbkdf2_sha256.hash(
+                    user_data["password"]
+                )
+
+            UserModel.query.filter_by(id=user_id).update(updated_data)
+            db.session.commit()
+            return jsonify({"message": "User updated"}), 200
+        except IntegrityError:
+            return jsonify({"Error": "Username or email already exists."}), 400
+    return jsonify({"message": "User not found"}), 404
