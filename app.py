@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 from controllers.user import blp as user_blp
 from controllers.location import blp as location_blueprint
@@ -14,6 +15,7 @@ from controllers.environment_data import blp as environment_data_blueprint
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     load_dotenv()
 
     app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -31,10 +33,7 @@ def create_app():
     jwt = JWTManager(app)
 
     db.init_app(app)
-    with app.app_context():
-        db.create_all()
-
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
     api = Api(app)
 
