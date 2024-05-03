@@ -14,7 +14,12 @@ blp = Blueprint(
 @blp.route("/", methods=["GET"])
 @blp.response(200, LocationSchema(many=True))
 def get_all_locations():
-    return LocationModel.query.limit(20).all()
+    try:
+        return LocationModel.query.limit(20).all()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        error_info = str(e)
+        return jsonify({"message": f"SQLAlchemyError: {error_info}"}), 500
 
 
 @blp.route("/search", methods=["GET"])
@@ -54,13 +59,14 @@ def search_locations_by_lat_lng(location_data):
 
 @blp.route("/", methods=["POST"])
 @blp.arguments(LocationSchema)
-@blp.response(200)
+@blp.response(201)
 def create_location(location_data):
     location = LocationModel(**location_data)
 
     try:
         db.session.add(location)
         db.session.commit()
+        return jsonify({"message": "Location created successfully"}), 201
     except IntegrityError as e:
         db.session.rollback()
         error_info = str(e.orig)
