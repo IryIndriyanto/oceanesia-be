@@ -15,7 +15,7 @@ from controllers.environment_data import blp as environment_data_blueprint
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, origins=['http://localhost:3000', 'https://oceanesia-fe.vercel.app'])
     load_dotenv()
 
     app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -33,6 +33,8 @@ def create_app():
     jwt = JWTManager(app)
 
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
     Migrate(app, db)
 
     api = Api(app)

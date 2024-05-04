@@ -1,8 +1,9 @@
 from db import db
-from flask import jsonify
+from flask import jsonify, request
 from flask_smorest import Blueprint
 from schemas.location import LocationSchema
 from models.location import LocationModel
+from sqlalchemy import or_, func
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 
@@ -14,19 +15,34 @@ blp = Blueprint(
 @blp.route("/", methods=["GET"])
 @blp.response(200, LocationSchema(many=True))
 def get_all_locations():
-    return LocationModel.query.limit(20).all()
+    try:
+        return LocationModel.query.limit(20).all()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        error_info = str(e)
+        return jsonify({"message": f"SQLAlchemyError: {error_info}"}), 500
 
 
-@blp.route("/search", methods=["GET"])
-@blp.arguments(LocationSchema(partial=True), location="query")
+@blp.route("/search/name", methods=["GET"])
 @blp.response(200, LocationSchema(many=True))
-def get_locations_by_name(location_data):
-    locations = LocationModel.query
-
-    if location_data:
-        locations = locations.filter(LocationModel.name.ilike(f"%{location_data}%"))
-
-    return locations.all()
+def get_locations_by_name():
+    try:
+        name = request.args.get("name")  # Get name from query parameter
+        if name:
+            # Filter by name using LIKE with wildcards (%)
+            query = LocationModel.query.filter(
+                or_(
+                    func.lower(LocationModel.name).like(f"%{name.lower()}%"),
+                    func.upper(LocationModel.name).like(f"%{name.upper()}%"),
+                )
+            )
+            return query.all()
+        else:
+            return LocationModel.query.limit(20).all()  # Fallback: get all locations
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        error_info = str(e)
+        return jsonify({"message": f"SQLAlchemyError: {error_info}"}), 500
 
 
 @blp.route("/search", methods=["GET"])
@@ -54,13 +70,14 @@ def search_locations_by_lat_lng(location_data):
 
 @blp.route("/", methods=["POST"])
 @blp.arguments(LocationSchema)
-@blp.response(200)
+@blp.response(201)
 def create_location(location_data):
     location = LocationModel(**location_data)
 
     try:
         db.session.add(location)
         db.session.commit()
+        return jsonify({"message": "Location created successfully"}), 201
     except IntegrityError as e:
         db.session.rollback()
         error_info = str(e.orig)
