@@ -16,6 +16,7 @@ from controllers.environment_data import blp as environment_data_blueprint
 def create_app():
     app = Flask(__name__)
     CORS(app)
+    CORS(issue_blueprint)
     load_dotenv()
 
     app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -33,6 +34,8 @@ def create_app():
     jwt = JWTManager(app)
 
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
     Migrate(app, db)
 
     api = Api(app)

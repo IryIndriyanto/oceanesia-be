@@ -1,6 +1,6 @@
 from db import db
 from flask import jsonify
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from schemas.issue import IssueSchema
 from models.issue import IssueModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -40,7 +40,7 @@ def get_issue_by_id(issue_id):
     if issue:
         return issue
     else:
-        return jsonify(message="Issue not found"), 404
+        abort(404, message="Issue not found")
 
 
 @blp.route("/<int:issue_id>", methods=["DELETE"])
@@ -67,3 +67,13 @@ def edit_issue(issue_data, issue_id):
         return issue
     else:
         return jsonify(message="Issue not found"), 404
+
+
+@blp.route("/location/<int:location_id>", methods=["GET"])
+@blp.response(200, IssueSchema)
+def get_issue_by_location_id(location_id):
+    issues = IssueModel.query.filter_by(location_id=location_id).first()
+    if issues:
+        return issues
+    else:
+        abort(404, message="No issues found for the given location ID")
