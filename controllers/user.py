@@ -2,7 +2,7 @@ from db import db
 from flask import jsonify
 from flask_smorest import Blueprint
 from models.user import UserModel
-from schemas.user import UserSchema
+from schemas.user import UserSchema, UserLoginSchema
 from sqlalchemy.exc import IntegrityError
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import (
@@ -27,12 +27,14 @@ def user_register(user_data):
         )
         db.session.add(new_user)
         db.session.commit()
+        return jsonify({"message": "User created"}), 200
+
     except IntegrityError:
         return jsonify({"Error": "Username or email already exists."}), 400
 
 
 @blp.route("/login", methods=["POST"])
-@blp.arguments(UserSchema)
+@blp.arguments(UserLoginSchema)
 @blp.response(200)
 def user_login(user_data):
     user = UserModel.query.filter_by(username=user_data["username"]).first()
@@ -40,7 +42,7 @@ def user_login(user_data):
         access_token = create_access_token(identity=user.id, fresh=True)
         refresh_token = create_refresh_token(identity=user.id)
         return (
-            jsonify({"access token": access_token, "refresh token": refresh_token}),
+            jsonify({"access_token": access_token, "refresh_token": refresh_token}),
             200,
         )
     return jsonify({"message": "Invalid credentials"}), 401
