@@ -16,7 +16,7 @@ blp = Blueprint(
 @blp.response(200, LocationSchema(many=True))
 def get_all_locations():
     try:
-        return LocationModel.query.limit(20).all()
+        return LocationModel.query.all()
     except SQLAlchemyError as e:
         db.session.rollback()
         error_info = str(e)
