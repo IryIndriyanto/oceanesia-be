@@ -95,8 +95,12 @@ def delete_location(location_id):
 
     if location:
         db.session.delete(location)
-        db.session.commit()
-        return None
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            error_info = str(e)
+            return jsonify({"message": f"SQLAlchemyError: {error_info}"}), 500
     else:
         return jsonify({"message": "Location not found"}), 404
 

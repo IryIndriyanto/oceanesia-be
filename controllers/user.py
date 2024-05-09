@@ -55,7 +55,7 @@ def get_user_profile():
     user_id = get_jwt_identity()
     user = db.session.get(UserModel, user_id)
     if user:
-        return jsonify({"username": user.username, "email": user.email}), 200
+        return jsonify({"user_id":user.id , "username": user.username, "email": user.email}), 200
     return jsonify({"message": "User not found"}), 404
 
 
