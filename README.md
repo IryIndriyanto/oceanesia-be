@@ -1,8 +1,8 @@
 <div align="center" id="top">
-    <img src="public/logo.png"/>
+    <img src="assets/logo.png"/>
 </div>
 
-![home-image](public/home-image.jpg)
+![home-image](assets/HomePage.jpeg)
 
 Our team is carrying the 14th theme of the SDGS, where the theme is Life Below Water, where currently environmental issues are still one of the main focuses in the world, especially issues regarding the cleanliness of the sea and beaches for the survival of marine ecosystems and humans themselves. From this background, we want to help preserve the environment, especially in marine areas and beaches, then we named our project "OCEANESIA".
 Oceanesia is a website based on maps or commonly referred to as "WEB GIS (Geographic Information System)".
@@ -25,19 +25,18 @@ Oceanesia itself aims to help with the monitoring system, control cleanliness an
 
 ```bash
 # Clone this project
-$ git clone https://github.com/IryIndriyanto/oceanesia-fe
+$ git clone https://github.com/IryIndriyanto/oceanesia-be
 
 # Access
-$ cd oceanesia-fe
+$ cd oceanesia-be
 
 # Install dependencies
-$ npm install @chakra-ui/icons @chakra-ui/next-js @chakra-ui/react @chakra-ui/toast @emotion/react @emotion/styled @types/leaflet framer-motion leaflet leaflet-defaulticon-compatibility next react react-dom react-icons react-leaflet swr
-
+$ pip install Flask Flask-SQLAlchemy flask-smorest python-dotenv Flask-JWT-Extended passlib flask-migrate psycopg2 gunicorn flask-cors
 
 # Run the project
-$ npm run dev
+$ flask run
 
-# The server will initialize in the <http://localhost:3000>
+# The server will initialize in the <http://localhost:5000>
 ```
 
 ## :file_folder: Folder Structure
@@ -45,6 +44,9 @@ $ npm run dev
 ```txt
 OCEANESIA-BE
    |-- __pycache__
+   |-- assets
+   |   |-- HomePage.jpeg
+   |   |-- logo.png
    |-- controllers
    |   |-- __pycache__
    |   |-- environment_data.py
@@ -84,7 +86,7 @@ OCEANESIA-BE
 | **Name**                    | **Role**               | **Email**                 | **GitHub**                                         |
 | --------------------------- | ---------------------- | ------------------------- | -------------------------------------------------- |
 | 1. `Iry Indriyanto`         | `Backend and Frontend` | `IryIndriyanto@gmail.com` | [Iry Indriyanto](https://github.com/IryIndriyanto) |
-| 2. `Putri Noviani`          | `Frontend`             | `PutriNoviani@gmail.com`  | [Iry Indriyanto](https://github.com/IryIndriyanto) |
+| 2. `Putri Noviani`          | `Frontend`             | `PutriNoviani@gmail.com`  | [Putri Noviani](https://github.com/PutriNoviani)   |
 | 3. `Catur Ageng Pinaringan` | `Backend`              | `caturageng023@gmail.com` | [Catur Ageng](https://github.com/CaturAgeng)       |
 
 <a href="#top">Back to top</a>

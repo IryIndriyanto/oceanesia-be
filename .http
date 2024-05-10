@@ -7,7 +7,7 @@ Content-Type: application/json
 {
   "username": "user2",
   "email": "user2@example.com",
-  "password": "ispassword"
+  "password_hash": "ispassword"
 }
 
 ### user_login
