@@ -10,3 +10,7 @@ class IssueSchema(Schema):
     issue_category = fields.String(required=True)
     issue_status = fields.String(required=True)
     issue_description = fields.String(required=True)
+
+
+class EditIssueStatusSchema(Schema):
+    issue_status = fields.String(required=True)
