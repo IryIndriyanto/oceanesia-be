@@ -1,7 +1,7 @@
 from db import db
 from flask import jsonify
 from flask_smorest import Blueprint, abort
-from schemas.issue import IssueSchema
+from schemas.issue import IssueSchema, EditIssueStatusSchema
 from models.issue import IssueModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
@@ -56,15 +56,18 @@ def delete_issue(issue_id):
 
 
 @blp.route("/<int:issue_id>", methods=["PUT"])
-@blp.arguments(IssueSchema)
+@blp.arguments(EditIssueStatusSchema)
 @blp.response(200, IssueSchema)
-def edit_issue(issue_data, issue_id):
+def edit_issue_status(issue_data, issue_id):
     issue = IssueModel.query.get(issue_id)
     if issue:
-        issue.title = issue_data["title"]
-        issue.description = issue_data["description"]
-        db.session.commit()
-        return issue
+        try:
+            issue.status = issue_data["status"]
+            db.session.commit()
+            return issue
+        except Exception as e:
+            db.session.rollback()
+            return jsonify(message=f"An error occurred while updating the issue status: {str(e)}"), 500
     else:
         return jsonify(message="Issue not found"), 404
 
