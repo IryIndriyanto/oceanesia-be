@@ -62,7 +62,7 @@ def edit_issue_status(issue_data, issue_id):
     issue = IssueModel.query.get(issue_id)
     if issue:
         try:
-            issue.status = issue_data["status"]
+            issue.issue_status = issue_data["issue_status"]
             db.session.commit()
             return issue
         except Exception as e:
