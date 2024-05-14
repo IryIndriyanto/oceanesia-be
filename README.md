@@ -85,7 +85,7 @@ OCEANESIA-BE
 
 | **Name**                    | **Role**               | **Email**                 | **GitHub**                                         |
 | --------------------------- | ---------------------- | ------------------------- | -------------------------------------------------- |
-| 1. `Iry Indriyanto`         | `Backend and Frontend` | `IryIndriyanto@gmail.com` | [Iry Indriyanto](https://github.com/IryIndriyanto) |
+| 1. `Iry Indriyanto`         | `Fullstack` | `IryIndriyanto@gmail.com` | [Iry Indriyanto](https://github.com/IryIndriyanto) |
 | 2. `Putri Noviani`          | `Frontend`             | `PutriNoviani@gmail.com`  | [Putri Noviani](https://github.com/PutriNoviani)   |
 | 3. `Catur Ageng Pinaringan` | `Backend`              | `caturageng023@gmail.com` | [Catur Ageng](https://github.com/CaturAgeng)       |
 
